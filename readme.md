@@ -1,7 +1,7 @@
 # Digital Signal Processing (DSP) Project
 
 ## Team Members
-- **Chaw Thiri San** (Team Leader) - ID: 12225262
+- **Chaw Thiri San** (Team Leader) - ID: 12225272
 - **Shukurullo Meliboev** - ID: 12225261
 - **Ilhomov Mansur Ilhom Ugli** - ID: 12225247
 
