@@ -62,7 +62,7 @@ def ocr_image(image_path):
         return f"Error: {str(e)}", None
 
 def main():
-    folder_path = "/content/Digital_Signal_Processing/tests"
+    folder_path = "/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/tests"
 
     if not os.path.exists(folder_path):
         print("Directory not found!")
