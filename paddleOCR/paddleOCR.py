@@ -192,7 +192,7 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
 
 if __name__ == "__main__":
     # Example usage
-    sample_image_path = "test1.png"  # Replace with your image path
+    sample_image_path = "/content/Digital_Signal_Processing/test_images/test1.png"  # Replace with your image path
     main(sample_image_path, use_gpu=False, visualize=True)
     
     # Camera input example (uncomment to use)
