@@ -1,10 +1,11 @@
 import os
 import cv2
+import glob
 import numpy as np
 import matplotlib.pyplot as plt
 from paddleocr import PaddleOCR, draw_ocr
 from PIL import Image
-
+# -------------------------------Prepare depedencies & OCR machine -----------------------------
 def install_dependencies():
     """Install required packages if not already installed"""
     try:
@@ -38,7 +39,7 @@ def initialize_ocr(use_gpu=False):
         cls_model_dir=None     # Use default classification model
     )
     return ocr
-
+# ------------------------------ Image Preprocessing ------------------------------
 def process_image(ocr_engine, image_path, is_file=True):
     """
     Process an image for OCR
@@ -74,7 +75,7 @@ def process_image(ocr_engine, image_path, is_file=True):
     result = ocr_engine.ocr(img_rgb, cls=True)
     
     return img_rgb, result, (w, h)
-
+# ------------------------------------ Vistualization Output  -----------------------
 def visualize_results(image, result, output_path=None, font_path="./fonts/korean.ttf"):
     """
     Visualize OCR results on the image
@@ -148,8 +149,9 @@ def extract_text(result):
             texts.append((text, confidence))
     
     return texts
+# ------------------------------------ OCR on Images  --------------------------
 
-def main(image_path, use_gpu=False, visualize=True, output_path=None, ocr_engine=None):
+def run_imageOCR(image_path, use_gpu=False, visualize=True, output_path=None, ocr_engine=None):
     """
     Main function to perform OCR on an image
     
@@ -193,13 +195,15 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None, ocr_engine
         print(f"Error processing image: {str(e)}")
         return []
 
-if __name__ == "__main__":
-    # Example usage
-    import glob
-
-    test_images_dir = "/content/Digital_Signal_Processing/test_images"
-    output_dir = "/content/Digital_Signal_Processing/detected_images"
-
+def run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False):
+    """
+    Run OCR on all images in the specified directory.
+    
+    Args:
+        test_images_dir: Path to folder containing test images.
+        output_dir: Path to save visualization outputs.
+        use_gpu: Use GPU acceleration if available.
+    """
     os.makedirs(output_dir, exist_ok=True)
 
     image_paths = sorted(
@@ -212,51 +216,84 @@ if __name__ == "__main__":
 
     # Initialize OCR once
     print("Initializing PaddleOCR once for all images...")
-    ocr_engine = initialize_ocr(use_gpu=False)
+    ocr_engine = initialize_ocr(use_gpu=use_gpu)
 
     for idx, image_path in enumerate(image_paths, start=1):
         output_path = os.path.join(output_dir, f"img{idx}.png")
         print(f"\n--- Processing {os.path.basename(image_path)} ---")
-        main(image_path, use_gpu=False, visualize=True, output_path=output_path, ocr_engine=ocr_engine)
-    
-    # Camera input example (uncomment to use)
+        run_imageOCR(image_path, use_gpu=use_gpu, visualize=True, output_path=output_path, ocr_engine=ocr_engine)
+
+# ------------------------------------ OCR on Webcam Video ----------------------
+def run_webcam_ocr(use_gpu=False):
     """
-    # Setup camera
-    cap = cv2.VideoCapture(0)
-    ocr_engine = initialize_ocr(use_gpu=False)
+    Run OCR using the webcam feed. Press 'c' to capture a frame and perform OCR.
+    Press 'q' to quit the webcam window.
     
+    Args:
+        use_gpu: Boolean indicating whether to use GPU acceleration
+    """
+    # Initialize webcam
+    cap = cv2.VideoCapture(0)
+    if not cap.isOpened():
+        print("Error: Could not open webcam.")
+        return
+
+    # Initialize OCR engine
+    ocr_engine = initialize_ocr(use_gpu)
+
+    print("Webcam OCR started. Press 'c' to capture, 'q' to quit.")
+
     while True:
         ret, frame = cap.read()
         if not ret:
+            print("Error: Failed to grab frame.")
             break
-            
+
         # Display the frame
-        cv2.imshow('Press q to capture for OCR', frame)
-        
-        # Capture frame for OCR when 'c' is pressed
+        cv2.imshow('Press "c" to capture for OCR | "q" to quit', frame)
+
         key = cv2.waitKey(1) & 0xFF
+
         if key == ord('c'):
-            # Process the current frame
-            image, result, dimensions = process_image(ocr_engine, frame, is_file=False)
-            texts = extract_text(result)
-            
-            # Print detected text
-            print("\nExtracted Text:")
-            for idx, (text, confidence) in enumerate(texts):
-                print(f"[{idx+1}] Text: {text} (Confidence: {confidence:.4f})")
-                
-            # Draw bounding boxes on the frame
-            for line in result[0]:
-                box = line[0]
-                pts = np.array(box, np.int32).reshape((-1, 1, 2))
-                cv2.polylines(frame, [pts], True, (0, 255, 0), 2)
-                
-            cv2.imshow('OCR Result', frame)
-        
-        # Quit on 'q'
-        if key == ord('q'):
+            # Perform OCR on captured frame
+            try:
+                image, result, _ = process_image(ocr_engine, frame, is_file=False)
+                texts = extract_text(result)
+
+                print("\nExtracted Text:")
+                for idx, (text, confidence) in enumerate(texts):
+                    print(f"[{idx+1}] Text: {text} (Confidence: {confidence:.4f})")
+
+                # Draw bounding boxes
+                for line in result[0]:
+                    box = np.array(line[0], np.int32).reshape((-1, 1, 2))
+                    cv2.polylines(frame, [box], True, (0, 255, 0), 2)
+
+                cv2.imshow('OCR Result', frame)
+
+            except Exception as e:
+                print(f"OCR error: {str(e)}")
+
+        elif key == ord('q'):
+            print("Quitting webcam OCR.")
             break
-            
+
     cap.release()
     cv2.destroyAllWindows()
-    """
+
+
+if __name__ == "__main__":
+    # IMG OCR
+    test_images_dir = "/content/Digital_Signal_Processing/test_images"
+    output_dir = "/content/Digital_Signal_Processing/detected_images"
+    single_img = "/content/Digital_Signal_Processing/test_images/test1.png"
+    
+    #               running OCR on single img
+    # run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
+    #               running OCR on multiple imgs
+    #run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False)
+
+    # WEBCAM OCR
+    # run_webcam_ocr(use_gpu=False)
+   
+    
