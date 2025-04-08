@@ -149,7 +149,7 @@ def extract_text(result):
     
     return texts
 
-def main(image_path, use_gpu=False, visualize=True, output_path=None):
+def main(image_path, use_gpu=False, visualize=True, output_path=None, ocr_engine=None):
     """
     Main function to perform OCR on an image
     
@@ -158,6 +158,7 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
         use_gpu: Boolean indicating whether to use GPU
         visualize: Boolean indicating whether to visualize results
         output_path: Path to save visualization (if None, only displays)
+        ocr_engine: Optional pre-initialized PaddleOCR instance
     
     Returns:
         list: Extracted text with confidence scores
@@ -166,9 +167,10 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
     # Install dependencies if needed
     install_dependencies()
     
-    # Initialize OCR engine
-    print("Initializing PaddleOCR with PP-OCRv3 for Korean+English...")
-    ocr_engine = initialize_ocr(use_gpu)
+    # Initialize OCR engine if not provided
+    if ocr_engine is None:
+        print("Initializing PaddleOCR with PP-OCRv3 for Korean+English...")
+        ocr_engine = initialize_ocr(use_gpu)
     
     # Process image
     print(f"Processing image: {image_path}")
@@ -208,10 +210,14 @@ if __name__ == "__main__":
 
     print(f"Found {len(image_paths)} images to process.")
 
+    # Initialize OCR once
+    print("Initializing PaddleOCR once for all images...")
+    ocr_engine = initialize_ocr(use_gpu=False)
+
     for idx, image_path in enumerate(image_paths, start=1):
         output_path = os.path.join(output_dir, f"img{idx}.png")
         print(f"\n--- Processing {os.path.basename(image_path)} ---")
-        main(image_path, use_gpu=False, visualize=True, output_path=output_path)
+        main(image_path, use_gpu=False, visualize=True, output_path=output_path, ocr_engine=ocr_engine)
     
     # Camera input example (uncomment to use)
     """
