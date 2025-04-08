@@ -75,7 +75,7 @@ def process_image(ocr_engine, image_path, is_file=True):
     
     return img_rgb, result, (w, h)
 
-def visualize_results(image, result, output_path=None, font_path="./fonts/NanumGothic.ttf"):
+def visualize_results(image, result, output_path=None, font_path="./fonts/korean.ttf"):
     """
     Visualize OCR results on the image
     
