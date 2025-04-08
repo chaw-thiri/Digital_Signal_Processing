@@ -5,6 +5,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 from paddleocr import PaddleOCR, draw_ocr
 from PIL import Image
+from concurrent.futures import ProcessPoolExecutor # for parallel processing
+from functools import partial 
+# --------------------------------- Prepare for Parallel Processing ---------------
+def process_image_path(image_path_tuple, output_dir, use_gpu):
+    idx, path = image_path_tuple
+    output_path = os.path.join(output_dir, f"img{idx}.png")
+    
+    # Initialize OCR inside subprocess
+    ocr_engine = initialize_ocr(use_gpu=use_gpu)
+    
+    return run_imageOCR(path, use_gpu=use_gpu, visualize=True, output_path=output_path, ocr_engine=ocr_engine)
+
+
 # -------------------------------Prepare depedencies & OCR machine -----------------------------
 def install_dependencies():
     """Install required packages if not already installed"""
@@ -195,15 +208,7 @@ def run_imageOCR(image_path, use_gpu=False, visualize=True, output_path=None, oc
         print(f"Error processing image: {str(e)}")
         return []
 
-def run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False):
-    """
-    Run OCR on all images in the specified directory.
-    
-    Args:
-        test_images_dir: Path to folder containing test images.
-        output_dir: Path to save visualization outputs.
-        use_gpu: Use GPU acceleration if available.
-    """
+def run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False, max_workers=4):
     os.makedirs(output_dir, exist_ok=True)
 
     image_paths = sorted(
@@ -212,16 +217,13 @@ def run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False):
         glob.glob(os.path.join(test_images_dir, "*.jpeg"))
     )
 
-    print(f"Found {len(image_paths)} images to process.")
+    print(f"Found {len(image_paths)} images to process in parallel.")
 
-    # Initialize OCR once
-    print("Initializing PaddleOCR once for all images...")
-    ocr_engine = initialize_ocr(use_gpu=use_gpu)
+    # Wrap additional args with partial
+    func = partial(process_image_path, output_dir=output_dir, use_gpu=use_gpu)
 
-    for idx, image_path in enumerate(image_paths, start=1):
-        output_path = os.path.join(output_dir, f"img{idx}.png")
-        print(f"\n--- Processing {os.path.basename(image_path)} ---")
-        run_imageOCR(image_path, use_gpu=use_gpu, visualize=True, output_path=output_path, ocr_engine=ocr_engine)
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        list(executor.map(func, enumerate(image_paths, start=1)))
 
 # ------------------------------------ OCR on Webcam Video ----------------------
 def run_webcam_ocr(use_gpu=False):
@@ -291,7 +293,7 @@ if __name__ == "__main__":
     #               running OCR on single img
     # run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
     #               running OCR on multiple imgs
-    #run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False)
+    run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False)
 
     # WEBCAM OCR
     # run_webcam_ocr(use_gpu=False)
