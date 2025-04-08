@@ -15,7 +15,7 @@ def process_image_path(image_path_tuple, output_dir, use_gpu):
     # Initialize OCR inside subprocess
     ocr_engine = initialize_ocr(use_gpu=use_gpu)
     
-    return run_imageOCR(path, use_gpu=use_gpu, visualize=True, output_path=output_path, ocr_engine=ocr_engine)
+    return run_imageOCR(path, use_gpu=use_gpu, visualize=True, output_path=output_path, ocr_engine=ocr_engine, image_ID= f"img{idx}")
 
 
 # -------------------------------Prepare depedencies & OCR machine -----------------------------
@@ -164,7 +164,7 @@ def extract_text(result):
     return texts
 # ------------------------------------ OCR on Images  --------------------------
 
-def run_imageOCR(image_path, use_gpu=False, visualize=True, output_path=None, ocr_engine=None):
+def run_imageOCR(image_path, use_gpu=False, visualize=True, output_path=None, ocr_engine=None, image_ID = None):
     """
     Main function to perform OCR on an image
     
@@ -193,8 +193,12 @@ def run_imageOCR(image_path, use_gpu=False, visualize=True, output_path=None, oc
         image, result, dimensions = process_image(ocr_engine, image_path)
         
         # Extract and print text
+        
         texts = extract_text(result)
-        print("\nExtracted Text:")
+        if image_ID:
+            print(f"\n[Image ID: {image_ID}] Extracted Text:")
+        else:
+            print("\nExtracted Text: ")
         for idx, (text, confidence) in enumerate(texts):
             print(f"[{idx+1}] Text: {text} (Confidence: {confidence:.4f})")
         
@@ -286,8 +290,8 @@ def run_webcam_ocr(use_gpu=False):
 
 if __name__ == "__main__":
     # IMG OCR
-    test_images_dir = "/content/Digital_Signal_Processing/test_images"
-    output_dir = "/content/Digital_Signal_Processing/detected_images"
+    test_images_dir = "/root/Digital_Signal_Processing/test_images"
+    output_dir = "/root/Digital_Signal_Processing/paddleOCR/detected_images"
     single_img = "/content/Digital_Signal_Processing/test_images/test1.png"
     
     #               running OCR on single img
