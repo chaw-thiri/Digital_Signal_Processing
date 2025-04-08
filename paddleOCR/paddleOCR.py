@@ -193,8 +193,25 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
 
 if __name__ == "__main__":
     # Example usage
-    sample_image_path = "/content/Digital_Signal_Processing/test_images/test7.png"  # Replace with your image path
-    main(sample_image_path, use_gpu=False, visualize=True,output_path = "detected_images/img7")
+    import glob
+
+    test_images_dir = "/content/Digital_Signal_Processing/test_images"
+    output_dir = "/content/Digital_Signal_Processing/detected_images"
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    image_paths = sorted(
+        glob.glob(os.path.join(test_images_dir, "*.png")) +
+        glob.glob(os.path.join(test_images_dir, "*.jpg")) +
+        glob.glob(os.path.join(test_images_dir, "*.jpeg"))
+    )
+
+    print(f"Found {len(image_paths)} images to process.")
+
+    for idx, image_path in enumerate(image_paths, start=1):
+        output_path = os.path.join(output_dir, f"img{idx}.png")
+        print(f"\n--- Processing {os.path.basename(image_path)} ---")
+        main(image_path, use_gpu=False, visualize=True, output_path=output_path)
     
     # Camera input example (uncomment to use)
     """
