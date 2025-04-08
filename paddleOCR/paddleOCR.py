@@ -162,6 +162,7 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
     Returns:
         list: Extracted text with confidence scores
     """
+    
     # Install dependencies if needed
     install_dependencies()
     
@@ -192,8 +193,8 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
 
 if __name__ == "__main__":
     # Example usage
-    sample_image_path = "/content/Digital_Signal_Processing/test_images/test1.png"  # Replace with your image path
-    main(sample_image_path, use_gpu=False, visualize=True)
+    sample_image_path = "/content/Digital_Signal_Processing/test_images/test7.png"  # Replace with your image path
+    main(sample_image_path, use_gpu=False, visualize=True,output_path = "detected_images/img7")
     
     # Camera input example (uncomment to use)
     """
