@@ -3,6 +3,7 @@ import pytesseract
 import numpy as np
 from PIL import Image
 import os
+import glob
 
 def preprocess_image(image_path):
     # Read the image
@@ -24,58 +25,54 @@ def ocr_image(image_path):
         # Preprocess the image
         processed_img = preprocess_image(image_path)
         
-        # Save the preprocessed image for inspection (don’t delete it yet)
-        temp_image_path = "temp_processed_image.png"
-        cv2.imwrite(temp_image_path, processed_img)
-        print(f"Preprocessed image saved as: {temp_image_path}")
-        
         # Configure Tesseract for Korean and English with PSM 6
-        custom_config = r'--oem 3 --psm 6 -l kor'
+        custom_config = r'--oem 3 --psm 6 -l kor+eng'
         
         # Perform OCR
         text = pytesseract.image_to_string(
-            Image.open(temp_image_path),
+            Image.fromarray(processed_img),
             config=custom_config
         )
         
         # Get detailed data including confidence scores
         details = pytesseract.image_to_data(
-            Image.open(temp_image_path),
+            Image.fromarray(processed_img),
             config=custom_config,
             output_type=pytesseract.Output.DICT
         )
-        
-        # Comment out removal so you can inspect the image
-        # os.remove(temp_image_path)
         
         return text, details
         
     except Exception as e:
         return f"Error: {str(e)}", None
 
-def main():
-    # Use relative path to test image
-    image_path = os.path.join("test_images", "test1.png")
-    if not os.path.exists(image_path):
-        print("Image file not found!")
+def process_all_images():
+    # Get all image files from test_images directory
+    image_files = glob.glob(os.path.join("test_images", "*.png"))
+    image_files.extend(glob.glob(os.path.join("test_images", "*.jpg")))
+    image_files.extend(glob.glob(os.path.join("test_images", "*.jpeg")))
+    
+    if not image_files:
+        print("No image files found in test_images directory!")
         return
     
-    text, details = ocr_image(image_path)
-    print("Extracted Text:")
-    print(text)
-    if details:
-        print("\nDetailed Results:")
-        n_boxes = len(details['text'])
-        for i in range(n_boxes):
-            if int(float(details['conf'][i])) > 60:
-                print(f"Text: {details['text'][i]}, Confidence: {details['conf'][i]}%")
+    print("\n=== OCR Results ===\n")
+    
+    for image_path in sorted(image_files):
+        image_name = os.path.basename(image_path)
+        text, details = ocr_image(image_path)
+        
+        print(f"{image_name} extracted text:")
+        print(text.strip())
+        
+        if details:
+            print("\nDetailed Results:")
+            n_boxes = len(details['text'])
+            for i in range(n_boxes):
+                if int(float(details['conf'][i])) > 60:
+                    print(f"Text: {details['text'][i]}, Confidence: {details['conf'][i]}%")
+        
+        print("\n" + "="*50 + "\n")
 
 if __name__ == "__main__":
-    import pytesseract
-    from PIL import Image
-
-    # Use relative path for test image
-    image = Image.open(os.path.join("test_images", "test1.png"))
-    text = pytesseract.image_to_string(image, lang="kor")  # Use 'kor' for Korean
-    print(text)
-    main()
+    process_all_images()
