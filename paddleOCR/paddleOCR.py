@@ -290,9 +290,9 @@ def run_webcam_ocr(use_gpu=False):
 
 if __name__ == "__main__":
     # IMG OCR
-    test_images_dir = "/root/Digital_Signal_Processing/test_images"
-    output_dir = "/root/Digital_Signal_Processing/paddleOCR/detected_images"
-    single_img = "/content/Digital_Signal_Processing/test_images/test1.png"
+    test_images_dir = "test_images"
+    output_dir = os.path.join("paddleOCR", "detected_images")
+    single_img = os.path.join("test_images", "test1.png")
     
     #               running OCR on single img
     # run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
