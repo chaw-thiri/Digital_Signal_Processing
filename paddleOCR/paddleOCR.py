@@ -89,7 +89,7 @@ def process_image(ocr_engine, image_path, is_file=True):
     
     return img_rgb, result, (w, h)
 # ------------------------------------ Vistualization Output  -----------------------
-def visualize_results(image, result, output_path=None, font_path="./fonts/korean.ttf"):
+def visualize_results(image, result, output_path=None, font_path=os.path.join("fonts", "korean.ttf")):
     """
     Visualize OCR results on the image
     
@@ -111,7 +111,7 @@ def visualize_results(image, result, output_path=None, font_path="./fonts/korean
     if not os.path.exists(font_path):
         print(f"Warning: Font file {font_path} not found. Using default font.")
         # Try to download a suitable font for Korean
-        font_dir = "./fonts"
+        font_dir = "fonts"
         os.makedirs(font_dir, exist_ok=True)
         
         try:

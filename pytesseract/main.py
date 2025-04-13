@@ -54,7 +54,8 @@ def ocr_image(image_path):
         return f"Error: {str(e)}", None
 
 def main():
-    image_path = "/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/test1.png"
+    # Use relative path to test image
+    image_path = os.path.join("test_images", "test1.png")
     if not os.path.exists(image_path):
         print("Image file not found!")
         return
@@ -73,7 +74,8 @@ if __name__ == "__main__":
     import pytesseract
     from PIL import Image
 
-    image = Image.open("test1.png")
+    # Use relative path for test image
+    image = Image.open(os.path.join("test_images", "test1.png"))
     text = pytesseract.image_to_string(image, lang="kor")  # Use 'kor' for Korean
     print(text)
     main()
