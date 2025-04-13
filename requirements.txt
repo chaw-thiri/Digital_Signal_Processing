@@ -1,5 +1,8 @@
-paddlepaddle 
-paddleocr 
-opencv-python 
-matplotlib 
+paddlepaddle
+paddleocr
+opencv-python
+matplotlib
 pillow
+numpy
+pytesseract
+requests
