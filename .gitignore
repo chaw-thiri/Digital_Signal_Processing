@@ -1,0 +1,20 @@
+/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/dataset
+/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/myenv
+/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/output
+# Python virtual environment
+myenv/
+
+# Dataset files
+dataset/
+
+# Output and log directories
+output/
+ocr_log.txt
+
+# Font files
+fonts/
+
+# Temporary files
+temp_processed_image.png
+
+# Add any other directories or files you don't want to track
