@@ -64,7 +64,10 @@ def process_image(ocr_engine, image_path, is_file=True):
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     else:
         # Use provided numpy array
-        img = image_path
+        img = "/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/dataset/20250403_115608.jpg"
+        if not isinstance(image_path, np.ndarray):
+            raise ValueError("Provided image_path is not a valid numpy array")
+
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) if len(img.shape) == 3 and img.shape[2] == 3 else img
     
     # Get image dimensions
@@ -192,7 +195,7 @@ def main(image_path, use_gpu=False, visualize=True, output_path=None):
 
 if __name__ == "__main__":
     # Example usage
-    sample_image_path = "test1.png"  # Replace with your image path
+    sample_image_path = "dataset/20250403_115525.jpg"  # Replace with your image path
     main(sample_image_path, use_gpu=False, visualize=True)
     
     # Camera input example (uncomment to use)
