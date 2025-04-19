@@ -46,13 +46,41 @@ def initialize_ocr(use_gpu=False):
         use_gpu=use_gpu,       # GPU acceleration if available
         show_log=False,        # Hide detailed logs
         det_db_thresh=0.3,     # Lower detection threshold for better text region detection
-        det_db_box_thresh=0.5, # Box threshold for text detection
+        det_db_box_thresh=0.3, # Box threshold for text detection
         rec_model_dir=None,    # Use default model directory
         det_model_dir=None,    # Use default detection model
         cls_model_dir=None     # Use default classification model
     )
     return ocr
 # ------------------------------ Image Preprocessing ------------------------------
+def image_rotator(img):
+    # rotate the img 180 degree
+    return cv2.rotate(img, cv2.ROTATE_180)
+
+def image_cropper(img):
+    # crop 1/3 from both left and right
+    # THIS FUNCTION IS ONLY USEFUL FOR THE MID-TERM DATASET 
+    h, w = img.shape[:2]
+    crop_margin = w // 3
+    cropped_img = img[:, crop_margin: w- crop_margin]
+    return cropped_img
+
+def apply_filter(img, upscale = True):
+    # improve image resolution by applying bi-linear interpolation 
+    # TODO : try with Nearest neightbour 
+    if upscale:
+        # upscale by 1.5 times for better OCR
+        h, w = img.shape[:2]
+        img = cv2.resize(img, (int(w*1.5),int(h*1.5)),interpolation= cv2.INTER_LINEAR)
+
+    # applying denoising fitlers to remove the noises 
+    # which could have been amplified by interpolation filter
+    #img = cv2.fastNlMeansDenoisingColored(img, None, h=10, hColor=10, templateWindowSize=7, searchWindowSize=21)
+
+    return img
+
+
+
 def process_image(ocr_engine, image_path, is_file=True):
     """
     Process an image for OCR
@@ -73,6 +101,12 @@ def process_image(ocr_engine, image_path, is_file=True):
         img = cv2.imread(image_path)
         if img is None:
             raise ValueError(f"Failed to load image: {image_path}")
+
+
+        # Preprocessing the img 
+        img = image_cropper(img)
+        img = image_rotator(img)
+        # img = apply_filter(img)
             
         # Convert BGR to RGB
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -127,7 +161,8 @@ def visualize_results(image, result, output_path=None, font_path="./fonts/korean
             font_path = None
     
     # Draw annotations on image
-    draw_img = draw_ocr(img_pil, boxes, txts, scores, font_path=font_path)
+    #draw_img = draw_ocr(img_pil, boxes, txts, scores, font_path=font_path)
+    draw_img = draw_ocr(img_pil, boxes, font_path=font_path)
     
     # Convert back to numpy for display
     draw_img = np.array(draw_img)
@@ -135,11 +170,11 @@ def visualize_results(image, result, output_path=None, font_path="./fonts/korean
     # Display the result
     plt.figure(figsize=(15, 15))
     plt.imshow(draw_img)
-    plt.axis('off')
+    plt.axis('on')
     
     # Save if output path provided
     if output_path:
-        plt.savefig(output_path, bbox_inches='tight', dpi=300)
+        cv2.imwrite(output_path, cv2.cvtColor(draw_img, cv2.COLOR_RGB2BGR))
         print(f"Visualization saved to {output_path}")
     
     plt.show()
@@ -290,14 +325,17 @@ def run_webcam_ocr(use_gpu=False):
 
 if __name__ == "__main__":
     # IMG OCR
-    test_images_dir = "/root/Digital_Signal_Processing/test_images"
-    output_dir = "/root/Digital_Signal_Processing/paddleOCR/detected_images"
-    single_img = "/content/Digital_Signal_Processing/test_images/test1.png"
+    test_images_dir = "/content/Digital_Signal_Processing/postgrad_dataset"
+    output_dir = "/content/Digital_Signal_Processing/paddleOCR/detected_images"
+    single_img = "/content/Digital_Signal_Processing/postgrad_dataset/test1.jpg"
     
     #               running OCR on single img
-    # run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
+    run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
     #               running OCR on multiple imgs
-    run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False)
+
+    # preload to force model download b4 multi-processing 
+    #_ = PaddleOCR(lang = 'korean', use_angle_cls = True, use_gpu = False)
+    #run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False)
 
     # WEBCAM OCR
     # run_webcam_ocr(use_gpu=False)
