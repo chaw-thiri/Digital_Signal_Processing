@@ -7,6 +7,37 @@ from paddleocr import PaddleOCR, draw_ocr
 from PIL import Image
 from concurrent.futures import ProcessPoolExecutor # for parallel processing
 from functools import partial 
+
+# ------------------------------ Hyperparameter figuring -------------------------
+from paddleocr import PaddleOCR
+import os
+
+def run_ocr_for_thresholds(img_path, use_gpu=False):
+    for thresh in [round(x, 2) for x in list(frange(0.1, 0.85, 0.05))]:
+        print(f"\nRunning OCR with det_db_box_thresh={thresh}")
+
+        ocr = PaddleOCR(
+            use_angle_cls=True,
+            lang="korean",
+            use_gpu=use_gpu,
+            show_log=False,
+            det_db_thresh=0.3,
+            det_db_box_thresh=thresh,
+        )
+
+        result = ocr.ocr(img_path, cls=True)
+        
+        # Log or save results
+        for idx, line in enumerate(result[0]):
+            print(f"{idx+1}: {line}")
+
+def frange(start, stop, step):
+    while start < stop:
+        yield start
+        start += step
+
+
+
 # --------------------------------- Prepare for Parallel Processing ---------------
 def process_image_path(image_path_tuple, output_dir, use_gpu):
     idx, path = image_path_tuple
@@ -46,7 +77,7 @@ def initialize_ocr(use_gpu=False):
         use_gpu=use_gpu,       # GPU acceleration if available
         show_log=False,        # Hide detailed logs
         det_db_thresh=0.3,     # Lower detection threshold for better text region detection
-        det_db_box_thresh=0.3, # Box threshold for text detection
+        det_db_box_thresh=0.35, # Box threshold for text detection
         rec_model_dir=None,    # Use default model directory
         det_model_dir=None,    # Use default detection model
         cls_model_dir=None     # Use default classification model
@@ -174,7 +205,7 @@ def visualize_results(image, result, output_path=None, font_path="./fonts/korean
     
     # Save if output path provided
     if output_path:
-        cv2.imwrite(output_path, cv2.cvtColor(draw_img, cv2.COLOR_RGB2BGR))
+        plt.savefig(output_path, bbox_inches='tight', dpi=300)
         print(f"Visualization saved to {output_path}")
     
     plt.show()
@@ -325,11 +356,12 @@ def run_webcam_ocr(use_gpu=False):
 
 if __name__ == "__main__":
     # IMG OCR
-    test_images_dir = "/content/Digital_Signal_Processing/postgrad_dataset"
-    output_dir = "/content/Digital_Signal_Processing/paddleOCR/detected_images"
-    single_img = "/content/Digital_Signal_Processing/postgrad_dataset/test1.jpg"
+    test_images_dir =r"C:\Users\chawt\Desktop\inha_6_sem\Digital_Signal_Processing\Postal-DB-dataset\content\Postal-DB\dataset"
+    output_dir =r"paddleOCR\detected_images"
+    single_img = r"C:\Users\chawt\Desktop\inha_6_sem\Digital_Signal_Processing\Postal-DB-dataset\content\Postal-DB\dataset\test_img.jpg"
     
     #               running OCR on single img
+    #run_ocr_for_thresholds(single_img, use_gpu= False)
     run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
     #               running OCR on multiple imgs
 
