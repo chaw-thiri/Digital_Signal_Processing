@@ -16,7 +16,7 @@ unicode_font_name = "./Arial Unicode.ttf"
 TINT_COLOR = (255, 255, 0) 
 TRANSPARENCY = .70  # Degree of transparency, 0-100%
 OPACITY = int(255 * TRANSPARENCY)
-unicode_font_name  = r"mid-term project\Digital_Signal_Processing\fonts\Arial Unicode.ttf"
+unicode_font_name  = r"mid-term project\Digital_Signal_Processing\api_based_detector\Arial Unicode.ttf"
 
 
 def text_extraction(image_path, ocr_data):
@@ -55,14 +55,14 @@ def text_extraction(image_path, ocr_data):
             clientId = re.findall(r'\bamk\d{5}\b', detected_text.lower())
             package_weight = re.findall(r'\b\d+(?:\.\d+)?\s*kg\b', detected_text.lower())
 
-            if clientId and package_weight:
-                print(f"ID : {clientId[0]}, Package weight :{package_weight[0]}")
-            elif clientId:
-                print(f"ID : {clientId[0]}, No weight detected ")
-            elif package_weight:
-                print(f"Package weight: {package_weight[0]}, no ID present ")
-            else: 
-                print("Detection fails")
+        if clientId and package_weight:
+            print(f"ID : {clientId[0]}, Package weight :{package_weight[0]}")
+        elif clientId:
+            print(f"ID : {clientId[0]}, No weight detected ")
+        elif package_weight:
+            print(f"Package weight: {package_weight[0]}, no ID present ")
+        else: 
+            print("Detection fails")
 
             
         img_id += 1
@@ -70,8 +70,8 @@ def text_extraction(image_path, ocr_data):
     img = Image.alpha_composite(img, overlay)
 
     output_file_name = f"img_{img_id}_overlay.png"
-    img.save(output_file_name)
-    # img.show()
+    #img.save(output_file_name)
+    img.show()
 
 def ocr_space_file(filename, api_key= API_KEY, overlay=True, language= "auto", engine=2):
 
@@ -87,7 +87,9 @@ def ocr_space_file(filename, api_key= API_KEY, overlay=True, language= "auto", e
         'isOverlayRequired': overlay,
         'apikey': api_key,
         'language': language,
-        'OCREngine': engine
+        'OCREngine': engine,
+        'detectOrientation': True, 
+        'scale': True,
 
     }
     with open(filename, 'rb') as f:
