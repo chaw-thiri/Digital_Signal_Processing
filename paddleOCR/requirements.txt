@@ -1,5 +1,0 @@
-paddlepaddle 
-paddleocr 
-opencv-python 
-matplotlib 
-pillow
