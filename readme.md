@@ -6,7 +6,7 @@
 - **Ilhomov Mansur Ilhom Ugli** - ID: 12225247
 
 ## Project Overview
-This repository contains our coursework and project files for the Digital Signal Processing (DSP) course. Our work includes signal processing techniques, implementation of various DSP algorithms, and practical applications using Python and MATLAB.
+The repository in the codes for the OCR project for Korean and English Texts.
 
 ## Contents
 - `docs/` - Documentation and reports
