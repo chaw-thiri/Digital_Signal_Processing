@@ -3,6 +3,7 @@
 /Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/output
 # Python virtual environment
 myenv/
+.env
 
 # Dataset files
 dataset/
