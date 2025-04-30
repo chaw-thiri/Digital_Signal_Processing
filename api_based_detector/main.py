@@ -1,5 +1,6 @@
 # from img_processing import image_cropper
 from ocr import run_single_img_ocr
+from barcode import detect_barcodes
 import numpy as np
 import os 
 
@@ -24,3 +25,4 @@ for filename in os.listdir(img_folder):
     if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
         img_path = os.path.join(img_folder, filename)
         run_single_img_ocr(img_path=img_path)
+        detect_barcodes(image_path=img_path)
