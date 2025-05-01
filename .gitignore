@@ -1,8 +1,14 @@
 /Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/dataset
 /Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/myenv
 /Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/output
+/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/cropped_dataset
 # Python virtual environment
 myenv/
+<<<<<<< Updated upstream
+=======
+.env
+/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/myenv
+>>>>>>> Stashed changes
 
 # Dataset files
 dataset/

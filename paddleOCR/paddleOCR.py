@@ -238,4 +238,24 @@ if __name__ == "__main__":
             
     cap.release()
     cv2.destroyAllWindows()
+<<<<<<< Updated upstream:paddleOCR/paddleOCR.py
     """
+=======
+
+
+if __name__ == "__main__":
+    # IMG OCR
+    test_images_dir = "/root/Digital_Signal_Processing/test_images"
+    output_dir = "old_versions/paddleOCR/output"
+    single_img = "/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/cropped_dataset/20250403_114855.jpg"
+    
+    #               running OCR on single img
+    run_imageOCR(single_img, use_gpu= False, visualize= True, output_path="OCR_image")
+    #               running OCR on multiple imgs
+    # run_image_ocr_batch(test_images_dir, output_dir, use_gpu=False)
+
+    # WEBCAM OCR
+    # run_webcam_ocr(use_gpu=False)
+   
+    
+>>>>>>> Stashed changes:old_versions/paddleOCR/paddleOCR.py
