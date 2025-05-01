@@ -1,6 +1,7 @@
 import os
 from ocr import run_single_img_ocr
 import cv2
+from barcode_copy import detect_barcodes
 
 def process_image_folder(folder_path):
     """Process all images in the dataset folder"""
@@ -11,6 +12,7 @@ def process_image_folder(folder_path):
             img_path = os.path.join(folder_path, filename)
             print(f"\n[*] Processing: {filename}")
             run_single_img_ocr(img_path)
+            detect_barcodes(img_path)
             processed += 1
     print(f"\n[✔] Processed {processed} images")
 
@@ -23,6 +25,7 @@ def capture_from_webcam(save_path="capture.jpg"):
         cv2.imwrite(save_path, frame)
         print(f"[✔] Saved capture to {save_path}")
         run_single_img_ocr(save_path)
+        detect_barcodes(save_path)
     else:
         print("[❌] Failed to capture image.")
     cap.release()
