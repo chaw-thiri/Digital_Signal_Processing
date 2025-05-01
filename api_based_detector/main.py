@@ -18,8 +18,7 @@ import os
 #run_single_img_ocr(img_path=img_path)
 
 # --------------------------------------------------------- Folder of images test ------------
-img_folder = r"C:\Users\chawt\Desktop\inha_6_sem\Digital_Signal_Processing\Postal-DB-dataset\content\Postal-DB\cropped_dataset"
-
+img_folder = "/Users/shukurullomeliboyev2004/Desktop/Digital_Signal_Processing/cropped_dataset"
 # Loop through all files in the folder
 for filename in os.listdir(img_folder):
     if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
