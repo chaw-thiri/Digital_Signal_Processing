@@ -44,9 +44,9 @@ This repository will be made private after grading to protect the privacy of pri
 
 ## Prediction result : 
 Sample Output 1    
-![image](https://github.com/user-attachments/assets/5a352e44-8623-4468-ae74-55b8cc30babd)
-Sample Output 2    
-![image](https://github.com/user-attachments/assets/b8b27b6d-9178-42fa-9f48-04841a518a83)
-Sample Output 3    
-![image](https://github.com/user-attachments/assets/46c26d7a-59fd-4e7d-9f40-df85b2e592ca)
+![image](https://github.com/user-attachments/assets/5a352e44-8623-4468-ae74-55b8cc30babd)    
+Sample Output 2      
+![image](https://github.com/user-attachments/assets/b8b27b6d-9178-42fa-9f48-04841a518a83)     
+Sample Output 3      
+![image](https://github.com/user-attachments/assets/46c26d7a-59fd-4e7d-9f40-df85b2e592ca)   
 
