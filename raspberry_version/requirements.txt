@@ -1,0 +1,5 @@
+opencv_python==4.10.0.84
+Pillow==11.2.1
+python-dotenv==1.1.0
+pyzbar==0.1.9
+Requests==2.32.3
